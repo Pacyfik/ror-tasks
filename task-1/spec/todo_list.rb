@@ -1,4 +1,4 @@
-require 'bundler/setup'
+﻿require 'bundler/setup'
 require 'rspec/expectations'
 require_relative '../lib/todo_list'
 require_relative '../lib/exceptions'
@@ -55,4 +55,74 @@ describe TodoList do
       list.completed?(0).should be_true
     end
   end
+  
+  context "with more (three) items" do
+    let(:items) { ["posprzatac", "wyniesc smieci", "umyc okna"] }
+    before:each do
+      list.complete(0)
+    end
+	
+	it "should return completed items" do
+	  list.completed.should == ["posprzatac"]
+	end
+	
+	it "should return uncompleted items" do
+	  list.uncompleted.should == ["wyniesc smieci", "umyc okna"]
+	end	
+
+	it "should remove an individual item" do
+	  list.remove(0)
+	  list.items[0].to_s.should == "wyniesc smieci"
+	  expect { list.remove(nil) }.to raise_error
+	end
+	
+	it "should remove all completed items" do
+	  list.remove_completed
+	  list.completed.should be_empty
+	end
+	
+	it "should revert order of two items" do
+	  list.revert(0,1)
+	  list.items[0].to_s.should == "wyniesc smieci"
+	  list.items[1].to_s.should == "posprzatac"
+	  expect { list.revert(nil) }.to raise_error
+	end
+	
+	it "should revert order of all items" do
+	  list.revert_all
+	  list.items[0].to_s.should == "umyc okna"
+	  list.items[2].to_s.should == "posprzatac"
+	end
+	
+	it "should toggle the state of an item" do
+	  list.toggle(0)
+	  list.completed?(0).should be_false
+	  expect { list.toggle(nil) }.to raise_error
+	end
+	
+	it "should set the state of an item to uncompleted" do
+	  list.uncomplete(0)
+	  list.completed?(0).should be_false
+	  expect { list.uncomplete(nil) }.to raise_error
+	end
+	
+	it "should change the description of an item" do
+	  list.change_desc(0, "odpoczac sobie")
+	  list.items[0].to_s.should == "odpoczac sobie"
+	  expect { list.change_desc(nil) }.to raise_error
+	end
+	
+	it "should sort the items by name" do
+	  list.sort_by_name
+	  list.items[0].to_s.should == "posprzatac"
+	  list.items[1].to_s.should == "umyc okna"
+	  list.items[2].to_s.should == "wyniesc smieci"
+	end
+	
+	it "should convert the list to text with specific format" do
+	  list.to_text.should == "[x] posprzatac\n[ ] wyniesc smieci\n[ ] umyc okna\n"
+	end
+	
+  end
+  
 end
