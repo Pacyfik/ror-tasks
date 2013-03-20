@@ -4,7 +4,7 @@ require_relative '../lib/exceptions'
 
 describe TodoList do
   subject(:list)            { TodoList.new(db: database) }
-  let(:database)            { stub! }
+  let(:database)            { stub }
   let(:item)                { Struct.new(:title,:description).new(title,description) }
   let(:title)               { "Shopping" }
   let(:description)         { "Go to the shop and buy toilet paper and toothbrush" }
@@ -30,6 +30,7 @@ describe TodoList do
   end
 
   it "should persist the added item" do
+    stub(database).items_count { 1 }
     mock(database).add_todo_item(item) { true }
     mock(database).get_todo_item(0) { item }
 
@@ -38,15 +39,18 @@ describe TodoList do
   end
 
   it "should persist the state of the item" do
-    stub(database).get_todo_item(0) { item }
-    mock(database).complete_todo_item(item,true) { true }
-    mock(database).complete_todo_item(item,false) { true }
+    mock(database).get_todo_item(0).times(3) { item }
+    mock(database).todo_item_completed?(0) { false }
+    mock(database).complete_todo_item(0,true) { true }
+    mock(database).todo_item_completed?(0) { true }
+    mock(database).complete_todo_item(0,false) { true } 
 
     list.toggle_state(0)
     list.toggle_state(0)
   end
 
   it "should fetch the first item from the DB" do
+    stub(database).items_count { 1 }
     mock(database).get_todo_item(0) { item }
     list.first.should == item
 
@@ -54,7 +58,7 @@ describe TodoList do
     list.first.should == nil
   end
 
-  it "should fetch the last item for the DB" do
+  it "should fetch the last item from the DB" do
     stub(database).items_count { 6 }
 
     mock(database).get_todo_item(5) { item }
@@ -73,4 +77,112 @@ describe TodoList do
       list << item
     end
   end
+  
+  it "should return nil for the first and the last item if the DB is empty" do
+    stub(database).items_count { 0 }
+	
+	list.first.should == nil
+	list.last.should == nil
+  end
+  
+  it "should raise an exception when changing the item state if the item is nil" do
+    mock(database).get_todo_item(5) { nil }
+  
+    expect{ list.toggle_state(5) }.to raise_error(IllegalArgument)
+  end
+  
+  context "with a nil item" do
+    let(:item)   { nil }
+
+    it "should not accept a nil item" do
+      dont_allow(database).add_todo_item(item)
+	  
+      list << item
+    end
+  end
+  
+  context "with a short item title" do
+    let(:title)   { "PHP" }
+
+    it "should not accept an item with too short (but not empty) title" do
+      dont_allow(database).add_todo_item(item)
+	  
+      list << item
+    end
+  end
+  
+  context "with missing description" do
+    let(:description)   { nil }
+
+    it "should accept an item with missing description" do
+      stub(database).items_count { 1 }
+	  mock(database).add_todo_item(item) { true }
+      mock(database).get_todo_item(0) { item }
+	  
+      list << item
+	  list.first.should == item
+    end
+  end
+  
+  context "with social network added" do
+    subject(:list)     { TodoList.new(db: database, social_network: network) }
+	let(:network)      { mock }
+
+	it "notifies a social network if an item is added to the list" do
+	  mock(network).notify(item) { true }
+	  mock(database).add_todo_item(item) { true }
+	
+	  list << item
+	end
+	
+	it "notifies a social network if an item is completed" do
+	  mock(network).notify(item) { true }
+	  mock(database).get_todo_item(0).times(2) { item }
+	  mock(database).todo_item_completed?(0) { false }
+	  mock(database).complete_todo_item(0,true) { true }
+	  
+	  list.toggle_state(0)
+	end
+	
+    context "with no title of the item" do
+	  let(:title)               { "" }
+	  
+	  it "doesn't notify the social network if the title of the item is missing" do
+	    mock(network).notify(item).times(0)
+	    #or dont_allow(network).notify(item)
+	
+	    list << item
+	  end
+	end  
+
+    context "with no body of the item" do
+	  let(:description)               { "" }
+	  
+	  it "notifies the social network if the body of the item is missing" do
+	    mock(network).notify(item) { true }
+		mock(database).add_todo_item(item) { true }
+	   
+	    list << item
+	  end
+	end  
+	
+    context "with item's body longer than 255 characters" do
+	  let(:description)               { "qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 " }	
+ 
+	  it "cuts the title of the item when notifying the SN if it is longer than 255 chars (both when adding and completing the item)" do
+	    mock(database).add_todo_item(item) { true }
+	    mock(network).notify(item).times(2) { true }
+	    mock(database).get_todo_item(0).times(2) { item }
+	    mock(database).todo_item_completed?(0) { false }
+	    mock(database).complete_todo_item(0,true) { true }
+	
+	    list << item
+	    item.title.length.should <= 255
+	    list.toggle_state(0)
+	    item.title.length.should <= 255
+	  end
+    end
+	
+  end
+  
 end
