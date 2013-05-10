@@ -3,7 +3,7 @@
 
   class Item
     attr_accessor :desc, :completed
-	
+
     def initialize(item)
       @desc = item
       @completed = false
