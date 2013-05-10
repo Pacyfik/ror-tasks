@@ -1,0 +1,7 @@
+require 'wallet/bank_account'
+require 'wallet/converter'
+require 'wallet/exchange_rate'
+require 'wallet/share'
+require 'wallet/stock'
+require 'wallet/stock_exchanger'
+require 'wallet/wallet_account'
