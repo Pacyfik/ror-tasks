@@ -39,7 +39,7 @@ describe TodoList do
   end
 
   it "should persist the state of the item" do
-    mock(database).get_todo_item(0).times(3) { item }
+    mock(database).get_todo_item(0).times(2) { item }
     mock(database).todo_item_completed?(0) { false }
     mock(database).complete_todo_item(0,true) { true }
     mock(database).todo_item_completed?(0) { true }
@@ -81,8 +81,8 @@ describe TodoList do
   it "should return nil for the first and the last item if the DB is empty" do
     stub(database).items_count { 0 }
 	
-	list.first.should == nil
-	list.last.should == nil
+	  list.first.should == nil
+	  list.last.should == nil
   end
   
   it "should raise an exception when changing the item state if the item is nil" do
@@ -116,17 +116,17 @@ describe TodoList do
 
     it "should accept an item with missing description" do
       stub(database).items_count { 1 }
-	  mock(database).add_todo_item(item) { true }
+	    mock(database).add_todo_item(item) { true }
       mock(database).get_todo_item(0) { item }
 	  
       list << item
-	  list.first.should == item
+	    list.first.should == item
     end
   end
   
   context "with social network added" do
     subject(:list)     { TodoList.new(db: database, social_network: network) }
-	let(:network)      { mock }
+	  let(:network)      { mock }
 
 	it "notifies a social network if an item is added to the list" do
 	  mock(network).notify(item) { true }
@@ -137,7 +137,7 @@ describe TodoList do
 	
 	it "notifies a social network if an item is completed" do
 	  mock(network).notify(item) { true }
-	  mock(database).get_todo_item(0).times(2) { item }
+	  mock(database).get_todo_item(0) { item }
 	  mock(database).todo_item_completed?(0) { false }
 	  mock(database).complete_todo_item(0,true) { true }
 	  
@@ -145,42 +145,42 @@ describe TodoList do
 	end
 	
     context "with no title of the item" do
-	  let(:title)               { "" }
+	    let(:title)               { "" }
 	  
-	  it "doesn't notify the social network if the title of the item is missing" do
-	    mock(network).notify(item).times(0)
-	    #or dont_allow(network).notify(item)
+	    it "doesn't notify the social network if the title of the item is missing" do
+	      mock(network).notify(item).times(0)
+	      #or dont_allow(network).notify(item)
 	
-	    list << item
-	  end
-	end  
+	      list << item
+	    end
+  	end  
 
     context "with no body of the item" do
-	  let(:description)               { "" }
+	    let(:description)               { "" }
 	  
-	  it "notifies the social network if the body of the item is missing" do
-	    mock(network).notify(item) { true }
-		mock(database).add_todo_item(item) { true }
+	    it "notifies the social network if the body of the item is missing" do
+	      mock(network).notify(item) { true }
+		    mock(database).add_todo_item(item) { true }
 	   
-	    list << item
-	  end
-	end  
+	      list << item
+	    end
+	  end  
 	
     context "with item's body longer than 255 characters" do
-	  let(:description)               { "qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 " }	
+	    let(:description)               { "qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 qwertyui1 " }	
  
-	  it "cuts the title of the item when notifying the SN if it is longer than 255 chars (both when adding and completing the item)" do
-	    mock(database).add_todo_item(item) { true }
-	    mock(network).notify(item).times(2) { true }
-	    mock(database).get_todo_item(0).times(2) { item }
-	    mock(database).todo_item_completed?(0) { false }
-	    mock(database).complete_todo_item(0,true) { true }
+	    it "cuts the title of the item when notifying the SN if it is longer than 255 chars (both when adding and completing the item)" do
+   	    mock(database).add_todo_item(item) { true }
+	      mock(network).notify(item).times(2) { true }
+	      mock(database).get_todo_item(0) { item }
+	      mock(database).todo_item_completed?(0) { false }
+	      mock(database).complete_todo_item(0,true) { true }
 	
-	    list << item
-	    item.title.length.should <= 255
-	    list.toggle_state(0)
-	    item.title.length.should <= 255
-	  end
+	      list << item
+	      item.title.length.should <= 255
+	      list.toggle_state(0)
+	      item.title.length.should <= 255
+      end
     end
 	
   end

@@ -3,11 +3,11 @@ class TodoList
   # Initialize the TodoList with +items+ (empty by default).
   def initialize(items=[])
     if items[:db] == nil
-	  raise IllegalArgument
-	else
-	  @db = items[:db]
-	  @network = items[:social_network] if items[:social_network]
-	end
+	    raise IllegalArgument
+	  else
+	    @db = items[:db]
+	    @network = items[:social_network] if items[:social_network]
+	  end
   end
   
   def empty?
@@ -20,12 +20,12 @@ class TodoList
   
   def <<(item)
     if item == nil || item.title == "" || item.title.length < 5
-	  nil
-	else
-	  @db.add_todo_item(item)
-	  shorten_title(item)
-	  @network.notify(item) if @network
-	end
+	    nil
+	  else
+	    @db.add_todo_item(item)
+	    shorten_title(item)
+	    @network.notify(item) if @network
+	  end
   end 
   
   def first
@@ -37,18 +37,17 @@ class TodoList
   end
   
   def toggle_state(id)
-    if @db.get_todo_item(id)
+    if item = @db.get_todo_item(id)
       if @db.todo_item_completed?(id)
-	    @db.complete_todo_item(id,false)
-	  else  
-	    @db.complete_todo_item(id,true)
-		item = @db.get_todo_item(id)
-		shorten_title(item)
-	    @network.notify(item) if @network
+	      @db.complete_todo_item(id,false)
+	    else  
+	      @db.complete_todo_item(id,true)
+		    shorten_title(item)
+	      @network.notify(item) if @network
+	    end
+	  else
+	    raise IllegalArgument
 	  end
-	else
-	  raise IllegalArgument
-	end
   end
   
   def shorten_title(item)
