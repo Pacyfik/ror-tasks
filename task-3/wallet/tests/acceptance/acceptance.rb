@@ -36,7 +36,7 @@ describe "wallet" do
   
   it "allows the user to sell stocks according to stock exchange rates" do
     set_wallet_balance(:pln, 0)
-    set_stock_price(:pekao, 150)
+    set_stock_price(:pekao, 150, :pln)
     set_share(:pekao, 3)
 
     sell_stock(:pekao, 3)
