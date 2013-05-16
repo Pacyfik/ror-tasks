@@ -1,3 +1,4 @@
+﻿require 'exceptions'
 require 'wallet/bank_account'
 require 'wallet/converter'
 require 'wallet/exchange_rate'

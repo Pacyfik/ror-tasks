@@ -47,7 +47,7 @@ describe "wallet" do
 
   it "allows the user to transfer money back to their bank account" do
     set_wallet_balance(:pln, 50)
-    set_bank_balance(0)
+    set_bank_balance(70)
 
     transfer_money(:pln, 50)
 

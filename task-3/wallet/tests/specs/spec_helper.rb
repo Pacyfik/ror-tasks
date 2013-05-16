@@ -1,4 +1,4 @@
-require 'bundler/setup'
+﻿require 'bundler/setup'
 require 'rspec/expectations'
 require 'rr'
 
