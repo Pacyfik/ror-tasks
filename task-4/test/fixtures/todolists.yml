@@ -1,0 +1,20 @@
+first_todolist:
+  id: 1
+  title: Zrobie to tylko raz
+  user_id: 1
+second_todolist:
+  id: 2
+  title: Zrobic dwa razy
+  user_id: 2
+third_todolist:
+  id: 3
+  title: Do trzech razy sztuka
+  user_id: 3
+fourth_todolist:
+  id: 4
+  title: Cztery to piekna liczba
+  user_id: 4
+fifth_todolist:
+  id: 5
+  title: Na piec
+  user_id: 5

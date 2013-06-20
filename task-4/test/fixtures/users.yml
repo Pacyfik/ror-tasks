@@ -1,0 +1,35 @@
+first_user:
+  id: 1
+  name: Adam
+  surname: Adamski
+  email: adam@adam.pl
+  password: 1234567890
+  failed_login_count: 1
+second_user:
+  id: 2
+  name: Bartek
+  surname: Bartkowski
+  email: bartek@bartek.pl
+  password: 1234567890
+  failed_login_count: 2
+third_user:
+  id: 3
+  name: Cecyl
+  surname: Cecylski
+  email: cecyl@cecyl.pl
+  password: 1234567890
+  failed_login_count: 3
+fourth_user:
+  id: 4
+  name: Dionizy
+  surname: Dionizowski
+  email: dionizy@dionizy.pl
+  password: 1234567890
+  failed_login_count: 4
+fifth_user:
+  id: 5
+  name: Eryk
+  surname: Erykowski
+  email: eryk@eryk.pl
+  password: 1234567890
+  failed_login_count: 5

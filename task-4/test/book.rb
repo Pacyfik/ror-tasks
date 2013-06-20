@@ -1,5 +1,5 @@
 require_relative 'test_helper'
-require_relative '../lib/book'
+require_relative '../lib/allmodels'
 
 describe Book do
   include TestHelper
