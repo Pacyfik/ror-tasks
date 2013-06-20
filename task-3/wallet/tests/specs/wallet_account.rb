@@ -55,6 +55,7 @@ describe WalletAccount do
     expect { account_pl.withdraw_money(nil)}.to raise_error(IllegalArgument)
   end
   
+  # ten niżej jest trochę naciągany
   it "should show proper balance values after exchanging money in different currencies" do
     converter = Converter.new(account_usd, account_pl, 3)
     converter.exchange(50)
